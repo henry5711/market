@@ -41,7 +41,7 @@ dev_deploy_job:
   script:
     - docker stop devrubick2market-api || true
     - docker rm devrubick2market-api || true
-    - docker run -d --restart always --name devrubick2market-api --network devapp -p 9030:80 -v devrubick2market-api-images:/var/www/html/public/images -v devrubick2market-api-images:/var/www/html/public/logos devrubick2market-api
+    - docker run -d --restart always --name devrubick2market-api --network devapp -p 9030:80 -v devrubick2market-api
     - docker exec devrubick2market-api php artisan migrate
   when: on_success
   tags:
