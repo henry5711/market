@@ -103,7 +103,7 @@ qa_deploy_job:
   script:
     - docker stop qarubick2market-api || true
     - docker rm qarubick2market-api || true
-    - docker run -d --restart always --name qarubick2market-api --network qaapp -p 8102:80 -v qarubick2market-api-images:/var/www/html/public/images -v qarubick2market-api-images:/var/www/html/public/logos qarubick2market-api
+    - docker run -d --restart always --name qarubick2market-api --network qaapp -p 8126:80 -v qarubick2market-api-images:/var/www/html/public/images -v qarubick2market-api-images:/var/www/html/public/logos qarubick2market-api
     - docker exec qarubick2market-api php artisan migrate
   when: on_success
   tags:
@@ -117,7 +117,7 @@ qa_rollback_job:
     - docker stop qarubick2market-api || true
     - docker rm qarubick2market-api || true
     - docker image tag qarubick2market-api:prev qarubick2market-api:latest || true
-    - docker run -d --restart always --name qarubick2market-api --network qaapp -p 8102:80 -v qarubick2market-api-images:/var/www/html/public/images -v qarubick2market-api-images:/var/www/html/public/logos qarubick2market-api
+    - docker run -d --restart always --name qarubick2market-api --network qaapp -p 8126:80 -v qarubick2market-api-images:/var/www/html/public/images -v qarubick2market-api-images:/var/www/html/public/logos qarubick2market-api
   when: manual
   tags:
     - qarubick2
