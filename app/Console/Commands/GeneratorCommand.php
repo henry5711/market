@@ -6,6 +6,11 @@
  * Date: 06/08/18
  * Time: 03:11 PM
  */
+/**
+ *  Version : 2.0
+ *  Actualizado para Laravel 8
+ *  Autor: Marcos López
+ */
 
 namespace App\Console\Commands;
 
@@ -56,12 +61,11 @@ class GeneratorCommand extends Command
 
         $this->getBr($name);
         $separator = '\\';
-        $name_controller = "\App\Http\Controllers\\" . $package . $separator . $name . "Controller::class";
-        File::append(base_path('routes/api.php'), "Route::get('" . Str::plural(strtolower($name)) . "', [$name_controller,'_index']);\n");
-        File::append(base_path('routes/api.php'), "Route::get('" .  Str::plural(strtolower($name)) . "/{id}', [$name_controller,'_show']);\n");
-        File::append(base_path('routes/api.php'), "Route::post('" .  Str::plural(strtolower($name)) . "', [$name_controller,'_store']);\n");
-        File::append(base_path('routes/api.php'), "Route::put('" .  Str::plural(strtolower($name)) . "/{id}', [$name_controller,'_update']);\n");
-        File::append(base_path('routes/api.php'), "Route::delete('" .  Str::plural(strtolower($name)) . "/{id}', [$name_controller,'_destroy']);\n");
+        File::append(base_path('routes/api.php'), "Route::get('" . Str::plural(strtolower($name)) . "', [\App\Http\Controllers\\" . $package . $separator . $name . "Controller::class,'_index']);\n");
+        File::append(base_path('routes/api.php'), "Route::get('" .  Str::plural(strtolower($name)) . "/{id}', [\App\Http\Controllers\\" . $package . $separator . $name . "Controller::class,'_show']);\n");
+        File::append(base_path('routes/api.php'), "Route::post('" .  Str::plural(strtolower($name)) . "', [\App\Http\Controllers\\" . $package . $separator . $name . "Controller::class,'_store']);\n");
+        File::append(base_path('routes/api.php'), "Route::put('" .  Str::plural(strtolower($name)) . "/{id}', [\App\Http\Controllers\\" . $package . $separator . $name . "Controller::class,'_update']);\n");
+        File::append(base_path('routes/api.php'), "Route::delete('" .  Str::plural(strtolower($name)) . "/{id}', [\App\Http\Controllers\\" . $package . $separator . $name . "Controller::class,'_destroy']);\n");
     }
 
     protected function model($name, $package)
