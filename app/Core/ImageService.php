@@ -12,10 +12,6 @@ namespace App\Core;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-
-//use Illuminate\Support\Facades\Storage;
 
 class ImageService //extends TatucoService
 {
@@ -28,86 +24,26 @@ class ImageService //extends TatucoService
     public function image($images, $id = 'zippyttech')
     {
         try{
-            $route_web = env('CUSTOM_URL') . '/images/';
+            $route = rtrim(app()->basePath('public/'), '/') . "/images/";
+            $route_web = env('APP_URL') ."/images/";
             $now = Carbon::now()->format('Y-m-d');
+            $upload_dir =$route;
             $img = $images;
             $ext = $this->get_extension($img);
             $img = str_replace('data:image/'.$ext.';base64,', '', $img);
             $data = base64_decode($img);
             $var_for = uniqid().'-'.$id.'-'.$now. '.'.$ext;
+            $file = $upload_dir . $var_for;
             $image = $route_web . $var_for;
-            //$success = file_put_contents($file, $data);
-            $success = Storage::put('public/'.$var_for, $data);
+            $success = file_put_contents($file, $data);
             return $success ?$image: false;
         }catch (\Exception $e){
-            $er = [
-                'mensaje' => $e->getMessage(),
-                'linea'   => $e->getLine(),
-                'archivo' => $e->getFile(),
-            ];
-            Log::critical($er);
+
+            Log::critical($e->getMessage());
             return null;
         }
 
     }
-    /**
-     * Función cargar una imagen en el servidor
-     *
-     * @author foskert@gmail.com
-     * @param String $images
-     * @param String $url
-     * @param String $consta
-     * @return Boolean | String
-     * @version 2.0
-     */
-    public function image_load($images,  $url = "", $cons = "IMAGE", $code = "" ){
-        try{
-            $route = app()->basePath('public/images'.$url.'/');
-            if(str_contains(env('APP_URL'), "https://")){
-                $route_web = env('APP_URL').'/images'.$url.'/';
-            }else{
-                $route_web = "https://".env('APP_URL').'/images'.$url.'/';
-            }
-            $now = Carbon::now()->format('Ymdhmsnm');
-            if (!File::exists($route)) {
-               File::makeDirectory($route , 0777, true);
-            }
-            define('UPLOAD_DIR_'.$cons, $route);
-            $img = $images;
-            if($ext = $this->get_extension($img)){
-                $img = str_replace('data:image/'.$ext.';base64,', '', $img);
-                $data = base64_decode($img);
-
-                $ran     = mt_rand(10000,99999);
-                $var_for = $cons.$ran. '.'.$ext;
-
-                if($cons == "IMAGE"){
-                    $file = UPLOAD_DIR_IMAGE.$var_for;
-                }else if($cons == "ICO"){
-                    $file = UPLOAD_DIR_ICO.$var_for;
-                }else if($cons == "DOC"){
-                    $file = UPLOAD_DIR_DOC.$var_for;
-                }else if($cons == "MEDIOS0"){
-                    $file = UPLOAD_DIR_MEDIOS.$var_for;
-                }
-                $image = $route_web . $var_for;
-
-                if(file_put_contents($file, $data)){
-                    return $image;
-                }else{
-                    Log::critical( 'No se logro la cargar del documento');
-                    return false;
-                }
-            }else{
-                Log::critical( 'Formato de documento no valida');
-                return false;
-            }
-        }catch (\Exception $e){
-            Log::critical( 'SCCOREI0001 '.$file);
-            return false;
-        }
-    }
-
 
     /**
      * @named Function valid Images
@@ -136,8 +72,9 @@ class ImageService //extends TatucoService
     {
         $extension="";
         if(!empty($string)){
-            $formats = ["jpg", "jpeg", "png", "gif",'icoñ..'];
-            if(substr($string,0,4)=='http'){
+            $formats = ["jpg", "jpeg", "png", "gif",'mp4','icoñ..'];
+            if(substr($string,0,4)=='http')
+            {
                 return $extension=3;
             }else {
                 $data = $string;
@@ -148,32 +85,6 @@ class ImageService //extends TatucoService
             }
         }else{
             return null;
-        }
-    }
-    /**
-     * permite eliminar una archivo en el directorio
-     * @author foskert@gmail.com
-     * @param String $document_path
-     * @version 1.0
-     */
-    public function delete($document_path) {
-        if(strpos(env('APP_URL'), "http") === false){
-            $document_path = str_replace("https:\\".env('APP_URL'), "", $document_path);
-        }
-
-        $document_path = str_replace(env('APP_URL'), "", $document_path);
-        //local
-        if (File::exists(app()->basePath('public'.$document_path))) {
-        //if (File::exists($document_path)) {
-            //local
-            if(unlink(app()->basePath('public'.$document_path))){
-            //if(unlink($document_path)){
-                return true;
-            }else{
-                return false;
-            }
-        }else{
-            return true;
         }
     }
 }

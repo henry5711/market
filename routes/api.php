@@ -1,6 +1,7 @@
 <?php
 
-use App\Core\ImageService;
+use App\Http\Controllers\post\postController;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,11 +16,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+
 });
 
-Route::post('probando',function(Request $request){
-    $image = (new ImageService())->image($request->profile);
-    return $image;
+
+Route::get('/', function () {
+
+    return response()->json([
+        //"version" => Route::app->version(),
+        "time"   => Carbon::now()->toDateTime(),
+        "php"    =>  phpversion()
+    ]);
 });
+
+
+
+
