@@ -28,7 +28,7 @@ dev_build_job:
     - sed -i -e "s;^\s*DB_PORT=.*;DB_PORT=5432;g" .env
     - sed -i -e "s;^\s*DEBUG=.*;DEBUG=1;g" .env
     - echo "APP_URL=https://devrubick2market.zippyttech.com" >> .env
-    - echo "#WASTE_API=https://devrubick2waste.zippyttech.com/api/" >> .env 
+    - echo "#WASTE_API=https://devrubick2market.zippyttech.com/api/" >> .env 
     - docker build -t devrubick2market-api .
   when: on_success
   tags:
