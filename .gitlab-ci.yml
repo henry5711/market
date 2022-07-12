@@ -1,0 +1,307 @@
+stages:
+  - backup
+  - build
+  - deploy
+  - rollback
+
+
+dev_backup_job:
+  stage: backup
+  script:
+    - docker image tag devrubick2market-api:latest devrubick2market-api:prev || true
+  tags:
+    - devapp
+  only :
+    - dev
+
+dev_build_job:
+  stage: build
+  script:
+  
+    - cp .env.example .env
+    - sed -i -e "s;^\s*SECRET_KEY=.*;SECRET_KEY=$SECRET_KEY;g" .env
+    - sed -i -e "s;^\s*DB_CONNECTION=.*;DB_CONNECTION=pgsql;g" .env
+    - sed -i -e "s;^\s*DB_DATABASE=.*;DB_DATABASE=devrubick2market;g" .env
+    - sed -i -e "s;^\s*DB_USERNAME=.*;DB_USERNAME=devrubick2market;g" .env
+    - sed -i -e "s;^\s*DB_PASSWORD=.*;DB_PASSWORD=$DEV_DB_PASS;g" .env
+    - sed -i -e "s;^\s*DB_HOST=.*;DB_HOST=10.0.0.26;g" .env
+    - sed -i -e "s;^\s*DB_PORT=.*;DB_PORT=5432;g" .env
+    - sed -i -e "s;^\s*DEBUG=.*;DEBUG=1;g" .env
+    - echo "APP_URL=https://devrubick2market.zippyttech.com" >> .env
+    - echo "#WASTE_API=https://devrubick2waste.zippyttech.com/api/" >> .env 
+    - docker build -t devrubick2market-api .
+  when: on_success
+  tags:
+    - devapp
+  only :
+    - dev
+
+dev_deploy_job:
+  stage: deploy
+  script:
+    - docker stop devrubick2market-api || true
+    - docker rm devrubick2market-api || true
+    - docker run -d --restart always --name devrubick2market-api --network devapp -p 9008:80 -v devrubick2market-api-images:/var/www/html/public/images -v devrubick2market-api-images:/var/www/html/public/logos devrubick2market-api
+    - docker exec devrubick2market-api php artisan migrate
+  when: on_success
+  tags:
+    - devapp
+  only:
+    - dev
+
+dev_rollback_job:
+  stage: rollback
+  script:
+    - docker stop devrubick2market-api || true
+    - docker rm devrubick2market-api || true
+    - docker image tag devrubick2market-api:prev devrubick2market-api:latest || true
+    - docker run -d --restart always --name devrubick2market-api --network devapp -p 9008:80 -v devrubick2market-api-images:/var/www/html/public/images -v devrubick2market-api-images:/var/www/html/public/logos devrubick2market-api
+  when: manual
+  tags:
+    - devapp
+  only:
+    - dev
+
+qa_backup_job:
+  stage: backup
+  script:
+    - docker image tag qarubick2market-api:latest qarubick2market-api:prev || true
+  tags:
+    - qarubick2
+  only :
+    - qa
+
+qa_build_job:
+  stage: build
+  script:
+    - cp .env.example .env
+    - sed -i -e "s;^\s*SECRET_KEY=.*;SECRET_KEY=$SECRET_KEY;g" .env
+    - sed -i -e "s;^\s*DB_CONNECTION=.*;DB_CONNECTION=pgsql;g" .env
+    - sed -i -e "s;^\s*DB_DATABASE=.*;DB_DATABASE=qarubick2market;g" .env
+    - sed -i -e "s;^\s*DB_USERNAME=.*;DB_USERNAME=qarubick2market;g" .env
+    - sed -i -e "s;^\s*DB_PASSWORD=.*;DB_PASSWORD=$QA_DB_PASS;g" .env
+    - sed -i -e "s;^\s*DB_HOST=.*;DB_HOST=10.0.0.25;g" .env
+    - sed -i -e "s;^\s*DB_PORT=.*;DB_PORT=5432;g" .env
+    - sed -i -e "s;^\s*DEBUG=.*;DEBUG=1;g" .env
+    - sed -i -e "s;^\s*APP_URL=.*;APP_URL=qareservas.berygo.com;g" .env
+    - echo "APP_URL=https://qarubick2market.zippyttech.com" >> .env
+    - echo "URL_API_ACCOUNT=https://qarubick2account.zippyttech.com" >> .env 
+    - echo "URL_API_CLIENT=https://qarubick2client.zippyttech.com" >> .env 
+    - echo "URL_API_NOTIFICATION=https://qarubick2notifications.zippyttech.com" >> .env 
+    - echo "URL_API_WALLET=https://qarubick2wallet.zippyttech.com" >> .env 
+    - echo "URL_API_USER=https://qarubick2user.zippyttech.com" >> .env 
+    - echo "#WASTE_API=https://qarubick2waste.zippyttech.com/api/" >> .env 
+    - docker build -t qarubick2market-api .
+  when: on_success
+  tags:
+    - qarubick2
+  only :
+    - qa
+
+qa_deploy_job:
+  stage: deploy
+  script:
+    - docker stop qarubick2market-api || true
+    - docker rm qarubick2market-api || true
+    - docker run -d --restart always --name qarubick2market-api --network qaapp -p 8102:80 -v qarubick2market-api-images:/var/www/html/public/images -v qarubick2market-api-images:/var/www/html/public/logos qarubick2market-api
+    - docker exec qarubick2market-api php artisan migrate
+  when: on_success
+  tags:
+    - qarubick2
+  only:
+    - qa
+
+qa_rollback_job:
+  stage: rollback
+  script:
+    - docker stop qarubick2market-api || true
+    - docker rm qarubick2market-api || true
+    - docker image tag qarubick2market-api:prev qarubick2market-api:latest || true
+    - docker run -d --restart always --name qarubick2market-api --network qaapp -p 8102:80 -v qarubick2market-api-images:/var/www/html/public/images -v qarubick2market-api-images:/var/www/html/public/logos qarubick2market-api
+  when: manual
+  tags:
+    - qarubick2
+  only:
+    - qa
+
+prod_backup_job:
+  stage: backup
+  script:
+    - docker image tag rubick2market-api:latest rubick2market-api:prev || true
+  tags:
+    - prodapp
+  only :
+    - tags
+
+prod_build_job:
+  stage: build
+  script:
+    - cp .env.example .env
+    - sed -i -e "s;^\s*SECRET_KEY=.*;SECRET_KEY=$SECRET_KEY;g" .env
+    - sed -i -e "s;^\s*DB_CONNECTION=.*;DB_CONNECTION=pgsql;g" .env
+    - sed -i -e "s;^\s*DB_DATABASE=.*;DB_DATABASE=rubick2market;g" .env
+    - sed -i -e "s;^\s*DB_USERNAME=.*;DB_USERNAME=rubick2market;g" .env
+    - sed -i -e "s;^\s*DB_PASSWORD=.*;DB_PASSWORD=$PROD_DB_PASS;g" .env
+    - sed -i -e "s;^\s*DB_HOST=.*;DB_HOST=10.0.0.31;g" .env
+    - sed -i -e "s;^\s*DB_PORT=.*;DB_PORT=5432;g" .env
+    - sed -i -e "s;^\s*DEBUG=.*;DEBUG=0;g" .env
+    - sed -i -e "s;^\s*APP_URL=.*;APP_URL=reservas.berygo.com;g" .env
+    - echo "#API_URL:" >> .env
+    - echo "URL_API_ACCOUNT=https://rubick2account.zippyttech.com" >> .env 
+    - echo "URL_API_CLIENT=https://rubick2client.zippyttech.com" >> .env 
+    - echo "URL_API_NOTIFICATION=https://rubick2notifications.zippyttech.com" >> .env 
+    - echo "URL_API_WALLET=https://rubick2wallet.zippyttech.com" >> .env 
+    - echo "URL_API_USER=https://rubick2user.zippyttech.com" >> .env 
+    - echo "WASTE_API=https://rubick2waste.zippyttech.com/api/" >> .env 
+    - docker build -t rubick2market-api .
+  when: on_success
+  tags:
+    - prodapp
+  only :
+    - tags
+
+prod_deploy_job:
+  stage: deploy
+  script:
+    - docker stop rubick2market-api || true
+    - docker rm rubick2market-api || true
+    - docker run -d --restart always --name rubick2market-api --network app -p 9005:80 -v rubick2market-api-images:/var/www/html/public/images -v rubick2market-api-images:/var/www/html/public/logos rubick2market-api
+    - docker exec rubick2market-api php artisan migrate
+  when: on_success
+  tags:
+    - prodapp
+  only:
+    - tags
+
+prod_rollback_job:
+  stage: rollback
+  script:
+    - docker stop rubick2market-api || true
+    - docker rm rubick2market-api || true
+    - docker image tag rubick2market-api:prev rubick2market-api:latest || true
+    - docker run -d --restart always --name rubick2market-api --network app -p 9005:80 -v rubick2market-api-images:/var/www/html/public/images -v rubick2market-api-images:/var/www/html/public/logos rubick2market-api
+  when: manual
+  tags:
+    - prodapp
+  only:
+    - tags
+
+berygo_build_job:
+  stage:  build
+  script:
+    - cp .env.example .env
+    - sed -i -e "s;^\s*SECRET_KEY=.*;SECRET_KEY=$SECRET_KEY;g" .env
+    - sed -i -e "s;^\s*DB_CONNECTION=.*;DB_CONNECTION=pgsql;g" .env
+    - sed -i -e "s;^\s*DB_DATABASE=.*;DB_DATABASE=marketrubick2berygo;g" .env
+    - sed -i -e "s;^\s*DB_USERNAME=.*;DB_USERNAME=marketrubick2berygo;g" .env
+    - sed -i -e "s;^\s*DB_PASSWORD=.*;DB_PASSWORD=$MARKET_BERYGO_DB_PASS;g" .env
+    - sed -i -e "s;^\s*DB_HOST=.*;DB_HOST=10.0.0.31;g" .env
+    - sed -i -e "s;^\s*DB_PORT=.*;DB_PORT=5432;g" .env
+    - sed -i -e "s;^\s*DEBUG=.*;DEBUG=0;g" .env
+    - sed -i -e "s;^\s*APP_URL=.*;APP_URL=https://market.berygo.com;g" .env
+    - echo "APP_URL=https://follow.berygo.com" >> .env
+    - echo "URL_API_ACCOUNT=https://account.berygo.com" >> .env 
+    - echo "URL_API_CLIENT=https://client.berygo.com" >> .env 
+    - echo "URL_API_NOTIFICATION=https://notifications.berygo.com" >> .env 
+    - echo "URL_API_WALLET=https://wallet.berygo.com" >> .env 
+    - echo "URL_API_USER=https://user.berygo.com" >> .env 
+    - echo "WASTE_API=https://waste.berygo.com/api/" >> .env 
+    - docker build -t market-api .
+  when: on_success
+  tags:
+    - berygo
+  only:
+    - berygo
+
+berygo_deploy_job:
+  stage: deploy
+  script:
+    - docker stop market-api || true
+    - docker rm market-api || true
+    - docker run -d --restart always --name market-api --memory="512m" -v market-api-images:/var/www/html/public/images -v market-api-images:/var/www/html/public/logos --network app -p 9027:80 market-api
+    - docker exec market-api php artisan migrate
+  when: on_success
+  tags:
+    - berygo
+  only:
+    - berygo
+
+cdg_build_job:
+  stage:  build
+  script:
+    - cp .env.example .env
+    - sed -i -e "s;^\s*SECRET_KEY=.*;SECRET_KEY=$SECRET_KEY;g" .env
+    - sed -i -e "s;^\s*DB_CONNECTION=.*;DB_CONNECTION=pgsql;g" .env
+    - sed -i -e "s;^\s*DB_DATABASE=.*;DB_DATABASE=marketrubick2cdg;g" .env
+    - sed -i -e "s;^\s*DB_USERNAME=.*;DB_USERNAME=marketrubick2cdg;g" .env
+    - sed -i -e "s;^\s*DB_PASSWORD=.*;DB_PASSWORD=$MARKET_BERYGO_DB_PASS;g" .env
+    - sed -i -e "s;^\s*DB_HOST=.*;DB_HOST=10.0.0.31;g" .env
+    - sed -i -e "s;^\s*DB_PORT=.*;DB_PORT=5432;g" .env
+    - sed -i -e "s;^\s*DEBUG=.*;DEBUG=0;g" .env
+    - sed -i -e "s;^\s*APP_URL=.*;APP_URL=market-cdg.zippyttech.com;g" .env
+    - echo "APP_URL=https://client-cdg.com" >> .env
+    - echo "URL_API_ACCOUNT=https://account-cdg.zippyttech.com" >> .env 
+    - echo "URL_API_CLIENT=https://client-cdg.zippyttech.com" >> .env 
+    - echo "URL_API_NOTIFICATION=https://notifications-cdg.zippyttech.com" >> .env 
+    - echo "URL_API_WALLET=https://wallet-cdg.zippyttech.com" >> .env 
+    - echo "URL_API_USER=https://user-cdg.zippyttech.com" >> .env 
+    - echo "WASTE_API=https://waste-cdg.zippyttech.com/api/" >> .env 
+    - docker build -t market-api .
+  when: on_success
+  tags:
+    - cdg
+  only:
+    - cdg
+
+cdg_deploy_job:
+  stage: deploy
+  script:
+    - docker stop market-api || true
+    - docker rm market-api || true
+    - docker run -d --restart always --name market-api --memory="512m" -v market-api-images:/var/www/html/public/images -v follow-api-images:/var/www/html/public/logos --network app -p 9024:80 market-api
+    - docker exec market-api php artisan migrate
+  when: on_success
+  tags:
+    - cdg
+  only:
+    - cdg
+
+bukewallet_build_job:
+  stage:  build
+  script:
+    - cp .env.example .env
+    - sed -i -e "s;^\s*SECRET_KEY=.*;SECRET_KEY=$SECRET_KEY;g" .env
+    - sed -i -e "s;^\s*DB_CONNECTION=.*;DB_CONNECTION=pgsql;g" .env
+    - sed -i -e "s;^\s*DB_DATABASE=.*;DB_DATABASE=marketrubick2bukewallet;g" .env
+    - sed -i -e "s;^\s*DB_USERNAME=.*;DB_USERNAME=marketrubick2bukewallet;g" .env
+    - sed -i -e "s;^\s*DB_PASSWORD=.*;DB_PASSWORD=$BUKEWALLET_DB_PASS;g" .env
+    - sed -i -e "s;^\s*DB_HOST=.*;DB_HOST=10.0.0.31;g" .env
+    - sed -i -e "s;^\s*DB_PORT=.*;DB_PORT=5432;g" .env
+    - sed -i -e "s;^\s*DEBUG=.*;DEBUG=0;g" .env
+    - sed -i -e "s;^\s*APP_URL=.*;APP_URL=market.bukewallet.com;g" .env
+    - echo "#API_URL:" >> .env
+    - echo "APP_URL=https://market.bukewallet.com" >> .env 
+    - echo "URL_API_ACCOUNT=https://account.bukewallet.com" >> .env 
+    - echo "URL_API_CLIENT=https://client.bukewallet.com" >> .env 
+    - echo "URL_API_NOTIFICATION=https://notifications.bukewallet.com" >> .env 
+    - echo "URL_API_WALLET=https://wallet.bukewallet.com" >> .env 
+    - echo "URL_API_USER=https://user.bukewallet.com" >> .env 
+    - docker build -t bukewallet-market-api .
+  when: on_success
+  tags:
+    - bukewallet
+  only:
+    - bukewallet
+
+bukewallet_deploy_job:
+  stage: deploy
+  script:
+    - docker stop bukewallet-market-api || true
+    - docker rm bukewallet-market-api || true
+    - docker run -d --restart always --name bukewallet-market-api --memory="512m" -v bukewallet-market-api-images:/var/www/html/public/images -v bukewallet-market-api-images:/var/www/html/public/logos --network app -p 9013:80 bukewallet-market-api
+    - docker exec bukewallet-market-api php artisan migrate
+  when: on_success
+  tags:
+    - bukewallet
+  only:
+    - bukewallet
