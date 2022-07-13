@@ -34,3 +34,28 @@ Route::get('/', function () {
 
 
 
+
+/** routes para register_user **/
+
+Route::get('register_users', [\App\Http\Controllers\register_user\register_userController::class,'_index']);
+Route::get('register_users/{id}', [\App\Http\Controllers\register_user\register_userController::class,'_show']);
+Route::post('register_users', [\App\Http\Controllers\register_user\register_userController::class,'_store']);
+Route::put('register_users/{id}', [\App\Http\Controllers\register_user\register_userController::class,'_update']);
+Route::delete('register_users/{id}', [\App\Http\Controllers\register_user\register_userController::class,'_delete']);
+
+/** routes para tags **/
+
+Route::get('tags', [\App\Http\Controllers\tags\tagsController::class,'_index']);
+Route::get('tags/{id}', [\App\Http\Controllers\tags\tagsController::class,'_show']);
+Route::post('tags', [\App\Http\Controllers\tags\tagsController::class,'_store']);
+Route::put('tags/{id}', [\App\Http\Controllers\tags\tagsController::class,'_update']);
+Route::delete('tags/{id}', [\App\Http\Controllers\tags\tagsController::class,'_delete']);
+
+/** routes para detail_user_tags **/
+
+Route::get('detail_user_tags', [\App\Http\Controllers\detail_user_tags\detail_user_tagsController::class,'_index']);
+Route::get('detail_user_tags/{id}', [\App\Http\Controllers\detail_user_tags\detail_user_tagsController::class,'_show']);
+Route::post('detail_user_tags', [\App\Http\Controllers\detail_user_tags\detail_user_tagsController::class,'_store']);
+Route::put('detail_user_tags/{id}', [\App\Http\Controllers\detail_user_tags\detail_user_tagsController::class,'_update']);
+Route::delete('detail_user_tags/{id}', [\App\Http\Controllers\detail_user_tags\detail_user_tagsController::class,'_delete']);
+Route::delete('detail_user_tags/relation/tags', [\App\Http\Controllers\detail_user_tags\detail_user_tagsController::class,'deletetagsrelation']);
