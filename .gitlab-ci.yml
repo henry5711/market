@@ -381,7 +381,7 @@ bukewallet_deploy_job:
   script:
     - docker stop bukewallet-market-api || true
     - docker rm bukewallet-market-api || true
-    - docker run -d --restart always --name bukewallet-market-api --memory="512m" -v bukewallet-market-api-images:/var/www/html/public/images -v bukewallet-market-api-images:/var/www/html/public/logos --network bukewallet -p 9013:80 bukewallet-market-api
+    - docker run -d --restart always --name bukewallet-market-api --memory="512m" -v bukewallet-market-api-images:/var/www/html/public/images -v bukewallet-market-api-images:/var/www/html/public/logos --network bukewallet -p 9001:80 bukewallet-market-api
     - docker exec bukewallet-market-api php artisan migrate
   when: on_success
   tags:
