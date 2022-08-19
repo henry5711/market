@@ -288,46 +288,6 @@ bukewallet_build_job:
     - docker build -t bukewallet-market-api .
   when: on_success
   tags:
-    - ifxbukewallet
-  only:
-    - ifxbukewallet
-
-bukewallet_deploy_job:
-  stage: deploy
-  script:
-    - docker stop bukewallet-market-api || true
-    - docker rm bukewallet-market-api || true
-    - docker run -d --restart always --name bukewallet-market-api --memory="512m" -v bukewallet-market-api-images:/var/www/html/public/images -v bukewallet-market-api-images:/var/www/html/public/logos --network bukewallet -p 9021:80 bukewallet-market-api
-    - docker exec bukewallet-market-api php artisan migrate
-  when: on_success
-  tags:
-    - ifxbukewallet
-  only:
-    - ifxbukewallet
-
- bukewallet_build_job:
-  stage:  build
-  script:
-    - cp .env.example .env
-    - sed -i -e "s;^\s*SECRET_KEY=.*;SECRET_KEY=$SECRET_KEY;g" .env
-    - sed -i -e "s;^\s*DB_CONNECTION=.*;DB_CONNECTION=pgsql;g" .env
-    - sed -i -e "s;^\s*DB_DATABASE=.*;DB_DATABASE=marketrubick2bukewallet;g" .env
-    - sed -i -e "s;^\s*DB_USERNAME=.*;DB_USERNAME=marketrubick2bukewallet;g" .env
-    - sed -i -e "s;^\s*DB_PASSWORD=.*;DB_PASSWORD=$BUKEWALLET_DB_PASS;g" .env
-    - sed -i -e "s;^\s*DB_HOST=.*;DB_HOST=10.0.0.3;g" .env
-    - sed -i -e "s;^\s*DB_PORT=.*;DB_PORT=5432;g" .env
-    - sed -i -e "s;^\s*DEBUG=.*;DEBUG=0;g" .env
-    - sed -i -e "s;^\s*APP_URL=.*;APP_URL=market.bukewallet.com;g" .env
-    - echo "#API_URL:" >> .env
-    - echo "APP_URL=https://market.bukewallet.com" >> .env 
-    - echo "URL_API_ACCOUNT=https://account.bukewallet.com" >> .env 
-    - echo "URL_API_CLIENT=https://client.bukewallet.com" >> .env 
-    - echo "URL_API_NOTIFICATION=https://notifications.bukewallet.com" >> .env 
-    - echo "URL_API_WALLET=https://wallet.bukewallet.com" >> .env 
-    - echo "URL_API_USER=https://user.bukewallet.com" >> .env 
-    - docker build -t bukewallet-market-api .
-  when: on_success
-  tags:
     - devappv2
   only:
     - devappv2
@@ -344,5 +304,4 @@ bukewallet_deploy_job:
     - devappv2
   only:
     - devappv2
-
  
