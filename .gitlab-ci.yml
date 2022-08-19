@@ -304,4 +304,61 @@ bukewallet_deploy_job:
     - ifxbukewallet
   only:
     - ifxbukewallet
+    
+    dev_backup_job:
+  stage: backup
+  script:
+    - docker image tag devrubick2market-api:latest devrubick2market-api:prev || true
+  tags:
+    - devappv2
+  only :
+    - devappv2
+
+dev_build_job:
+  stage: build
+  script:
+  
+    - cp .env.example .env
+    - sed -i -e "s;^\s*SECRET_KEY=.*;SECRET_KEY=$SECRET_KEY;g" .env
+    - sed -i -e "s;^\s*DB_CONNECTION=.*;DB_CONNECTION=pgsql;g" .env
+    - sed -i -e "s;^\s*DB_DATABASE=.*;DB_DATABASE=devrubick2market;g" .env
+    - sed -i -e "s;^\s*DB_USERNAME=.*;DB_USERNAME=devrubick2market;g" .env
+    - sed -i -e "s;^\s*DB_PASSWORD=.*;DB_PASSWORD=$DEV_DB_PASS;g" .env
+    - sed -i -e "s;^\s*DB_HOST=.*;DB_HOST=172.17.0.2;g" .env
+    - sed -i -e "s;^\s*DB_PORT=.*;DB_PORT=5432;g" .env
+    - sed -i -e "s;^\s*DEBUG=.*;DEBUG=1;g" .env
+    - echo "APP_URL=https://devrubick2market.zippyttech.com" >> .env
+    - echo "#WASTE_API=https://devrubick2market.zippyttech.com/api/" >> .env 
+    - docker build -t devrubick2market-api .
+  when: on_success
+  tags:
+    - devappv2
+  only :
+    - devappv2
+
+dev_deploy_job:
+  stage: deploy
+  script:
+    - docker stop devrubick2market-api || true
+    - docker rm devrubick2market-api || true
+    - docker run -d --restart always --name devrubick2market-api --network devapp -p 9030:80 devrubick2market-api
+    - docker exec devrubick2market-api php artisan migrate
+  when: on_success
+  tags:
+    - devappv2
+  only:
+    - devappv2
+
+dev_rollback_job:
+  stage: rollback
+  script:
+    - docker stop devrubick2market-api || true
+    - docker rm devrubick2market-api || true
+    - docker image tag devrubick2market-api:prev devrubick2market-api:latest || true
+    - docker run -d --restart always --name devrubick2market-api --network devapp -p 9030:80 -v devrubick2market-api-images:/var/www/html/public/images -v devrubick2market-api-images:/var/www/html/public/logos devrubick2market-api
+  when: manual
+  tags:
+    - devappv2
+  only:
+    - devappv2
  
