@@ -305,7 +305,7 @@ bukewallet_deploy_job:
   only:
     - ifxbukewallet
     
-    dev_backup_job:
+dev_backup_job:
   stage: backup
   script:
     - docker image tag devrubick2market-api:latest devrubick2market-api:prev || true
