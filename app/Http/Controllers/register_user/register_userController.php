@@ -16,12 +16,13 @@ class register_userController extends CrudController
 
     public function filter(Request $request){
         $filter=register_user::filtro($request)->with('tags');
-        if(isset($request->order)){
-         $filter=$filter->orderBy($request->order)->get();
-        }
-        else if(isset($request->order) and isset($request->pag)){
+        if(isset($request->order) and isset($request->pag)){
             $filter=$filter->orderBy($request->order)->paginate($request->pag);
         }
+       else if(isset($request->order)){
+            $filter=$filter->orderBy($request->order)->get();
+           }
+
         else if(isset($request->pag)){
             $filter=$filter->paginate($request->pag);
         }
