@@ -42,7 +42,7 @@ Route::get('register_users/{id}', [\App\Http\Controllers\register_user\register_
 Route::post('register_users', [\App\Http\Controllers\register_user\register_userController::class,'_store']);
 Route::put('register_users/{id}', [\App\Http\Controllers\register_user\register_userController::class,'_update']);
 Route::delete('register_users/{id}', [\App\Http\Controllers\register_user\register_userController::class,'_delete']);
-Route::get('register_users/filter', [\App\Http\Controllers\register_user\register_userController::class,'filter']);
+Route::get('register_users/filter/market', [\App\Http\Controllers\register_user\register_userController::class,'filter']);
 /** routes para tags **/
 
 Route::get('tags', [\App\Http\Controllers\tags\tagsController::class,'_index']);
