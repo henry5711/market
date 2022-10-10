@@ -19,6 +19,12 @@ class register_userController extends CrudController
         if(isset($request->order)){
          $filter=$filter->orderBy($request->order)->get();
         }
+        else if(isset($request->order) and isset($request->pag)){
+            $filter=$filter->orderBy($request->order)->paginate($request->pag);
+        }
+        else if(isset($request->pag)){
+            $filter=$filter->paginate($request->pag);
+        }
         else{
             $filter=$filter->get();
         }
