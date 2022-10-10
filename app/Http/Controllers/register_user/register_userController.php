@@ -23,6 +23,6 @@ class register_userController extends CrudController
             $filter->get();
         }
 
-        return ["list"=>$filter,"total"=>count($filter)];
+        return ["list"=>$filter];
     }
 }
