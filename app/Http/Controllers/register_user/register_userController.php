@@ -17,10 +17,10 @@ class register_userController extends CrudController
     public function filter(Request $request){
         $filter=register_user::filtro($request);
         if(isset($request->order)){
-         $filter->orderBy($request->order)->get();
+         $filter=$filter->orderBy($request->order)->get();
         }
         else{
-            $filter->get();
+            $filter=$filter->get();
         }
 
         return ["list"=>$filter];
