@@ -15,4 +15,10 @@ class tags extends CrudModel
     {
         return $this->belongsToMany(register_user::class,'detail_user_tag','id_tags','id_user');
     }
+
+    public function conditions_tag(){
+        return $this->hasMany(conditions_tags::class);
+    }
+
+
 }
