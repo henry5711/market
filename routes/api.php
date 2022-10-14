@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\coditions\ConditionsController;
 use App\Http\Controllers\post\postController;
+use App\Models\conditions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -59,3 +61,19 @@ Route::post('detail_user_tags', [\App\Http\Controllers\detail_user_tags\detail_u
 Route::put('detail_user_tags/{id}', [\App\Http\Controllers\detail_user_tags\detail_user_tagsController::class,'_update']);
 Route::delete('detail_user_tags/{id}', [\App\Http\Controllers\detail_user_tags\detail_user_tagsController::class,'_delete']);
 Route::delete('detail_user_tags/relation/tags', [\App\Http\Controllers\detail_user_tags\detail_user_tagsController::class,'deletetagsrelation']);
+
+
+/** routes para conditions **/
+
+Route::get('conditions', [\App\Http\Controllers\conditions\ConditionsController::class,'index']);
+Route::get('conditions/{id}', [\App\Http\Controllers\conditions\ConditionsController::class,'show']);
+Route::post('conditions', [\App\Http\Controllers\conditions\ConditionsController::class,'store']);
+Route::put('conditions/{id}', [\App\Http\Controllers\conditions\ConditionsController::class,'update']);
+Route::delete('conditions/{id}', [\App\Http\Controllers\conditions\ConditionsController::class,'destroy']);
+
+//routes para lottery
+Route::get('lottery', [\App\Http\Controllers\lottery\LotteryController::class,'index']);
+Route::get('lottery/{id}', [\App\Http\Controllers\lottery\LotteryController::class,'show']);
+Route::post('lottery', [\App\Http\Controllers\lottery\LotteryController::class,'store']);
+Route::put('lottery/{id}', [\App\Http\Controllers\lottery\LotteryController::class,'update']);
+Route::delete('lottery/{id}', [\App\Http\Controllers\lottery\LotteryController::class,'destroy']);
