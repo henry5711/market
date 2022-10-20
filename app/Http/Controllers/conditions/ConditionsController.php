@@ -96,7 +96,7 @@ class ConditionsController extends Controller
     {
         try {
             DB::beginTransaction();
-            $response = condition::with(['conditions_tag','conditions_tag.tags'])
+            $response = condition::with(['tags'])
             ->where('id',$id)->first();
 
             DB::commit();
