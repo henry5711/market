@@ -14,13 +14,16 @@ class AddSalarioFilter extends Migration
     public function up()
     {
         Schema::table('conditions', function (Blueprint $table) {
-            $table->dropColumn('salario_ini');
-            $table->dropColumn('salario_end');
+            $table->dropColumn('salario');
+        });
+
+        Schema::table('conditions', function (Blueprint $table) {
             $table->enum('salario',['Menor a 100$',
             '100-299$',
             '300-499$',
             '500-1500$',
-            'Mayor a 1500$'])->nullable();
+            'Mayor a 1500$',
+            'Todos'])->nullable();
         });
     }
 
