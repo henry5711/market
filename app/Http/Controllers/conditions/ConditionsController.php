@@ -65,10 +65,11 @@ class ConditionsController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return response()->json([
-            "message"       => "Nueva condicion creada",
-            "response"      => $response,
-        ]);
+        return response()->json(array(
+            'success' => true,
+            'message' => 'condicion creada',
+            'value'   => $response,
+        ));
     }
 
     protected function createCondition($request)
@@ -146,6 +147,7 @@ class ConditionsController extends Controller
             DB::rollBack();
             return response()->json([
                 'data' => [
+                    'success' => false,
                     'code'   => $e->getCode(),
                     'title'  => [__('Error al editar')],
                     'errors' => $e->getMessage(),
@@ -153,10 +155,11 @@ class ConditionsController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return response()->json([
-            "message"       => "Condicion editada",
-            "response"      => $response,
-        ]);
+        return response()->json(array(
+            'success' => true,
+            'message' => 'condicion editada',
+            'value'   => $response,
+        ));
     }
 
     protected function updateConditions($condition, $request)

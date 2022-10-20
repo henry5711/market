@@ -65,10 +65,11 @@ class LotteryController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return response()->json([
-            "message"       => "Nuevo sorteo creado",
-            "response"      => $response,
-        ]);
+        return response()->json(array(
+            'success' => true,
+            'message' => 'sorteo creado',
+            'value'   => $response,
+        ));
     }
 
     protected function createLottery($request)
@@ -148,10 +149,11 @@ class LotteryController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return response()->json([
-            "message"       => "Sorteo editado",
-            "response"      => $response,
-        ]);
+        return response()->json(array(
+            'success' => true,
+            'message' => 'sorteo editado',
+            'value'   => $response,
+        ));
     }
 
     protected function updateLottery($lottery, $request)
