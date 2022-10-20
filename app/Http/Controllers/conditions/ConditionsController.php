@@ -76,8 +76,7 @@ class ConditionsController extends Controller
     {
         $condition               = new condition();
         $condition->genero   = $request->genero;
-        $condition->salario_ini         = $request->salario_ini;
-        $condition->salario_end = $request->salario_end;
+        $condition->salario  = $request->salario;
         $condition->save();
 
         if(isset($request->tags)){
@@ -165,13 +164,11 @@ class ConditionsController extends Controller
     protected function updateConditions($condition, $request)
     {
         $condition->genero= $request->genero ?$request->genero:$condition->genero;
-        $condition->salario_ini= $request->salario_ini ?$request->salario_ini: $condition->salario_ini;
-        $condition->salario_end= $request->salario_end ?$request->salario_end : $condition->salario_end;
+        $condition->salario= $request->salario ?$request->salario:$condition->salario;
         $condition->update();
 
         if(isset($request->tags)){
                 $condition->tags()->sync($request->tags);
-
         }
     }
 
