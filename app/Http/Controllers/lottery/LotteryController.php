@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\lottery;
 use App\Http\Requests\StorelotteryRequest;
 use App\Http\Requests\UpdatelotteryRequest;
+use App\Models\condition;
+use App\Models\register_user;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
@@ -190,5 +192,15 @@ class LotteryController extends Controller
             return response()->json([
               "message"       => "sorteo eliminado",
              ]);
+    }
+
+    public function showWiners($id){
+      $sorteo = lottery::where('id',$id)->first();
+      $filter=condition::where('id',$sorteo->conditions_id)->first();
+
+      $winers=register_user::when($filter->genero, function ($query, $genero) {
+        return $query->where('genero', 'like', "%$genero%");
+    })->get();
+
     }
 }
