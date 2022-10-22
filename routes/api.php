@@ -72,6 +72,7 @@ Route::put('conditions/{id}', [\App\Http\Controllers\conditions\ConditionsContro
 Route::delete('conditions/{id}', [\App\Http\Controllers\conditions\ConditionsController::class,'destroy']);
 
 //routes para lottery
+Route::get('lottery/winners/{id}', [\App\Http\Controllers\lottery\LotteryController::class,'showWiners']);
 Route::get('lottery', [\App\Http\Controllers\lottery\LotteryController::class,'index']);
 Route::get('lottery/{id}', [\App\Http\Controllers\lottery\LotteryController::class,'show']);
 Route::post('lottery', [\App\Http\Controllers\lottery\LotteryController::class,'store']);

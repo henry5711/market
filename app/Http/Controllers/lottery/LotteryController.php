@@ -202,5 +202,6 @@ class LotteryController extends Controller
         return $query->where('genero', 'like', "%$genero%");
     })->get();
 
+    return $winers;
     }
 }
