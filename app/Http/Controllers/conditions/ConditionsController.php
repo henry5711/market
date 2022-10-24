@@ -77,6 +77,9 @@ class ConditionsController extends Controller
         $condition               = new condition();
         $condition->genero   = $request->genero;
         $condition->salario  = $request->salario;
+        $condition->pais= $request->pais;
+        $condition->estado= $request->estado;
+        $condition->city= $request->city;
         $condition->save();
 
         if(isset($request->tags)){
@@ -165,6 +168,9 @@ class ConditionsController extends Controller
     {
         $condition->genero= $request->genero ?$request->genero:$condition->genero;
         $condition->salario= $request->salario ?$request->salario:$condition->salario;
+        $condition->pais= $request->pais?$request->pais:$condition->pais;
+        $condition->estado= $request->estado?$request->estado:$condition->estado;
+        $condition->city= $request->city?$request->city:$condition->city;
         $condition->update();
 
         if(isset($request->tags)){
