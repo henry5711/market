@@ -10,7 +10,7 @@ class condition extends Model
     use HasFactory;
     protected $guarded = ['id'];
     protected $table='conditions';
-    protected $fillable=['genero','salario'];
+    protected $fillable=['genero','salario','pais','estado','city'];
 
     /*public function conditions_tag(){
         return $this->belongsToMany(conditions_tags::class);

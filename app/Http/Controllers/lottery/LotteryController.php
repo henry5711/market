@@ -23,7 +23,7 @@ class LotteryController extends Controller
     {
         try {
             DB::beginTransaction();
-            $response = lottery::with(['getcondition','getcondition.tags'])->get();
+            $response = lottery::with(['getcondition', 'getcondition.tags'])->get();
 
             DB::commit();
         } catch (\Exception $e) {
@@ -37,7 +37,7 @@ class LotteryController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return ["list"=>$response,"total"=>count($response)];
+        return ["list" => $response, "total" => count($response)];
     }
 
     /**
@@ -77,7 +77,7 @@ class LotteryController extends Controller
     protected function createLottery($request)
     {
         $lottery = new lottery();
-        $lottery->number_winners= $request->number_winners;
+        $lottery->number_winners = $request->number_winners;
         $lottery->conditions_id = $request->conditions_id;
         $lottery->save();
 
@@ -94,8 +94,8 @@ class LotteryController extends Controller
     {
         try {
             DB::beginTransaction();
-            $response = lottery::with(['getcondition','getcondition.tags'])
-            ->where('id',$id)->first();
+            $response = lottery::with(['getcondition', 'getcondition.tags'])
+                ->where('id', $id)->first();
 
             DB::commit();
         } catch (\Exception $e) {
@@ -109,7 +109,7 @@ class LotteryController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return ["list"=>$response];
+        return ["list" => $response];
     }
 
     /**
@@ -119,7 +119,7 @@ class LotteryController extends Controller
      * @param  \App\Models\lottery  $lottery
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $lottery = lottery::where('id', '=', $id)->first();
         if (!$lottery) {
@@ -160,8 +160,8 @@ class LotteryController extends Controller
 
     protected function updateLottery($lottery, $request)
     {
-        $lottery->number_winners= $request->number_winners ?$request->number_winners:$lottery->number_winners;
-        $lottery->conditions_id= $request->conditions_id ?$request->conditions_id:$lottery->conditions_id;
+        $lottery->number_winners = $request->number_winners ? $request->number_winners : $lottery->number_winners;
+        $lottery->conditions_id = $request->conditions_id ? $request->conditions_id : $lottery->conditions_id;
         $lottery->update();
     }
 
@@ -173,13 +173,13 @@ class LotteryController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             DB::beginTransaction();
 
-            $lottery= lottery::findOrFail($id);
-               $lottery->delete();
+            $lottery = lottery::findOrFail($id);
+            $lottery->delete();
             DB::commit();
-            }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'data' => [
@@ -187,21 +187,48 @@ class LotteryController extends Controller
                     'title'  => [__('fallo al eliminar sorteo')],
                     'errors' => $e->getMessage(),
                 ]
-              ], Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
-            return response()->json([
-              "message"       => "sorteo eliminado",
-             ]);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+        return response()->json([
+            "message"       => "sorteo eliminado",
+        ]);
     }
 
-    public function showWiners($id){
-      $sorteo = lottery::where('id',$id)->first();
-      $filter=condition::where('id',$sorteo->conditions_id)->first();
+    public function showWiners($id)
+    {
+        $sorteo = lottery::where('id', $id)->first();
+        $filter = condition::where('id', $sorteo->conditions_id)->first();
 
-      $winers=register_user::when($filter->genero, function ($query, $genero) {
-        return $query->where('genero', 'like', "%$genero%");
-    })->get();
+        $winers = register_user::when($filter->genero, function ($query, $genero) {
+            return $query->where('genero', 'like', "%$genero%");
+        })
+            ->when($filter->salario, function ($query, $salario) {
+                return $query->where('salario', 'like', "%$salario%");
+            })
+            ->when($filter->pais, function ($query, $pais) {
+                return $query->where('pais', 'ilike', "%$pais%");
+            })
+            ->when($filter->estado, function ($query, $estado) {
+                return $query->where('estado', 'ilike', "%$estado%");
+            })
+            ->when($filter->city, function ($query, $city) {
+                return $query->where('city', 'ilike', "%$city%");
+            })->limit($sorteo->number_winners)->get();
 
-    return $winers;
+        if (count($winers) > 0) {
+           foreach($winers as $winner){
+                $up=register_user::where('id',$winner->id)->first();
+                $up->victory=true;
+                $up->save();
+           }
+           return $winers;
+        }
+        else{
+            return response()->json(array(
+                'success' => false,
+                'message' => 'no hay ganadores en este sorteo'
+            ));
+        }
+
     }
 }
