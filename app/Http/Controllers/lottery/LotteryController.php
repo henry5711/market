@@ -199,7 +199,7 @@ class LotteryController extends Controller
         $sorteo = lottery::where('id', $id)->first();
         $filter = condition::where('id', $sorteo->conditions_id)->first();
 
-        $winers = register_user::when($filter->genero, function ($query, $genero) {
+        $winers = register_user::where('victory',false)->when($filter->genero, function ($query, $genero) {
             return $query->where('genero', 'like', "%$genero%");
         })
             ->when($filter->salario, function ($query, $salario) {
