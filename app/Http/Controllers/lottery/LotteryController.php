@@ -221,7 +221,8 @@ class LotteryController extends Controller
                 $up->victory=true;
                 $up->save();
            }
-           return $winers;
+           return ["list" => $winers, "total" => count($winers)];
+
         }
         else{
             return response()->json(array(
