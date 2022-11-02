@@ -306,7 +306,7 @@ bukewallet_deploy_job:
   only:
     - devappv2
 
-dev_build_job:
+stable_build_job:
   stage: build
   script:
     - cp .env.example .env
@@ -327,11 +327,11 @@ dev_build_job:
   only :
     - stable
 
-dev_deploy_job:
+stable_deploy_job:
   stage: deploy
   script:
     - docker stop stablemarket-api || true
-    - docker rm stable2market-api || true
+    - docker rm stablemarket-api || true
     - docker run -d --restart always --name stablemarket-api --network stable -p 9030:80 stablemarket-api
     - docker exec stablemarket-api php artisan migrate
   when: on_success
