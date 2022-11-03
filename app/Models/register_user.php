@@ -10,7 +10,7 @@ class register_user extends CrudModel
     protected $guarded = ['id'];
     protected $table='register_user';
     protected $fillable=['dni','name','email','fec_nacimiento','genero','instagram','nacionality'
-    ,'phone','play','number','salario','pais','estado','city','victory'];
+    ,'phone','play','number','salario','pais','estado','city','victory', 'confirmation_phone'];
 
     public function tags()
     {
